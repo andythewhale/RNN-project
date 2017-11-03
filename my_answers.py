@@ -6,13 +6,27 @@ from keras.layers import LSTM
 import keras
 
 
-# TODO: fill out the function below that transforms the input series 
+# fill out the function below that transforms the input series
 # and window-size into a set of input/output pairs for use with our RNN model
 def window_transform_series(series, window_size):
     # containers for input/output pairs
     X = []
     y = []
 
+    # as the example in the notebook shows we need to slice things.
+    # but we need to use a more generalized method.
+
+    # so for each item in our window_size
+    for i in range(len(series)):
+
+        # just append the current distance subtracted by the
+        # total distance needed to travel for x
+        # also append the series at the current position for y
+        X.append(series[i - window_size:i])
+        y.append(series[i])
+
+
+    
     # reshape each 
     X = np.asarray(X)
     X.shape = (np.shape(X)[0:2])
