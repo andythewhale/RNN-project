@@ -16,8 +16,9 @@ def window_transform_series(series, window_size):
     # as the example in the notebook shows we need to slice things.
     # but we need to use a more generalized method.
 
-    # so for each item in our window_size
-    for i in range(len(series)):
+    # so for each item in our window_size (I had to add window size here,
+    # i did not realize that without it we would evaluate too many indices).
+    for i in range(window_size, len(series)):
 
         # just append the current distance subtracted by the
         # total distance needed to travel for x
@@ -26,7 +27,7 @@ def window_transform_series(series, window_size):
         y.append(series[i])
 
 
-    
+    # this should still be good to go
     # reshape each 
     X = np.asarray(X)
     X.shape = (np.shape(X)[0:2])
@@ -37,7 +38,26 @@ def window_transform_series(series, window_size):
 
 # TODO: build an RNN to perform regression on our time series input/output data
 def build_part1_RNN(window_size):
-    pass
+
+    # let's build a model
+    model = Sequential()
+    model.add(LSTM(13, input_shape= (window_size, 1)))
+    model.add(Dense(1))
+
+    # optimizer
+    optimizer = keras.optimizers.Adagrad(lr = 0.01, epsilon = 1e-08, decay = 0.0)
+
+    # compile with cost MSE
+    model.compile(loss = 'mean_squared_erros', optimizer = optimizer)
+
+    # fit the model to our data
+    model.fit(X_train, y_train, epochs = 100, batch_size = 100, verbose = 1)
+
+    # check for over-fitting
+    prediction_vs_train = model.predict(X_train)
+    prediction_vs_test = model.predict(X_test)
+
+
 
 
 ### TODO: return the text input with only ascii lowercase and the punctuation given below included.
