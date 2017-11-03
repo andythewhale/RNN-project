@@ -43,19 +43,7 @@ def build_part1_RNN(window_size):
     model = Sequential()
     model.add(LSTM(13, input_shape= (window_size, 1)))
     model.add(Dense(1))
-
-    # optimizer
-    optimizer = keras.optimizers.Adagrad(lr = 0.01, epsilon = 1e-08, decay = 0.0)
-
-    # compile with cost MSE
-    model.compile(loss = 'mean_squared_erros', optimizer = optimizer)
-
-    # fit the model to our data
-    model.fit(X_train, y_train, epochs = 100, batch_size = 100, verbose = 1)
-
-    # check for over-fitting
-    prediction_vs_train = model.predict(X_train)
-    prediction_vs_test = model.predict(X_test)
+    return model
 
 
 
