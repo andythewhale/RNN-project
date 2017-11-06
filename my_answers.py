@@ -58,9 +58,8 @@ def cleaned_text(text):
     unwanted_characters = ['$', '%', '&', '*', '@', '\xa0', '¢', '¨', '©', 'ã']
 
     # get rid of unwanted characters
-
     for i in unwanted_characters:       # so for each item in unwanted characters
-        text = text.replace(i, '')      # replace each unwanted character with nothing
+        text = text.replace(i, ' ')     # replace each unwanted character with nothing
     return text                         # return and replace text
 
 
@@ -72,9 +71,9 @@ def window_transform_text(text, window_size, step_size):
     outputs = []
 
     # we just need to cut it up again and append to input output,
-    for i in range(window_size, len(text), step_size):      # so for each item in our range of those
-        inputs.append(text[i-window_size])                  # we're going to want to look at each incoming letter
-        outputs.append(text[i])                             # we're also going to want to create an outgoing letter
+    for i in range(0, len(text) - window_size, step_size):  # so for each item in our range of those
+        inputs.append(text[i:i + window_size])              # we're going to want to look at each incoming letter
+        outputs.append(text[i + window_size])               # we're also going to want to create an outgoing letter
 
 
     return inputs, outputs
@@ -82,8 +81,8 @@ def window_transform_text(text, window_size, step_size):
 # a single LSTM hidden layer with softmax activation, categorical_crossentropy loss 
 def build_part2_RNN(window_size, num_chars):
     model = Sequential()                                                                # id as Sequential
-    model.add(LSTM(200, input_shape = (window_size, num_chars)))                        # specify input shape and LSTMs
+    model.add(LSTM(213, input_shape = (window_size, num_chars)))                        # specify input shape and LSTMs
     model.add(Dense(num_chars, activation = 'softmax'))                                 # add dense output w/ softmax
-    optimizer = keras.optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=1e-08, decay=0.0)   # add optimizer layer
+    optimizer = keras.optimizers.RMSprop(lr=0.005, rho=0.9, epsilon=1e-08, decay=0.0)    # add optimizer layer
     model.compile(loss='categorical_crossentropy', optimizer=optimizer)                 # add loss function
     return model                                                                        # return the model
