@@ -1,14 +1,15 @@
-import numpy as np
+import numpy as np                      # we need numpy
 
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM
+from keras.models import Sequential     # we need Sequential models, these are time series.
+from keras.layers import Dense          # we need Dense layers for outputs
+from keras.layers import LSTM           # we need LSTM layers for classification
 import keras
 
 
 # fill out the function below that transforms the input series
 # and window-size into a set of input/output pairs for use with our RNN model
 def window_transform_series(series, window_size):
+
     # containers for input/output pairs
     X = []
     y = []
@@ -28,41 +29,61 @@ def window_transform_series(series, window_size):
 
 
     # this should still be good to go
-    # reshape each 
-    X = np.asarray(X)
-    X.shape = (np.shape(X)[0:2])
-    y = np.asarray(y)
-    y.shape = (len(y),1)
+    # reshape each
 
+    X = np.asarray(X)            # let's look at X as an array
+    X.shape = (np.shape(X)[0:2]) # we only want the shape of X to follow from 0 --> 2
+    y = np.asarray(y)            # let's look at y as an array
+    y.shape = (len(y),1)         # we only want the shape of y to follow from its length <-- 1
+
+    # return X, y
     return X,y
 
-# TODO: build an RNN to perform regression on our time series input/output data
+
 def build_part1_RNN(window_size):
 
     # let's build a model
-    model = Sequential()
-    model.add(LSTM(13, input_shape= (window_size, 1)))
-    model.add(Dense(1))
-    return model
+    model = Sequential()                                    # let's id our model as sequential
+    model.add(LSTM(13, input_shape = (window_size, 1)))     # let's use 13 LSTM units
+    model.add(Dense(1))                                     # let's add a dense layer to determine out output
+    return model                                            # let's return our model
 
 
 
 
-### TODO: return the text input with only ascii lowercase and the punctuation given below included.
+
 def cleaned_text(text):
-    punctuation = ['!', ',', '.', ':', ';', '?']
 
-    return text
+    # could just import this but ok.
+    unwanted_characters = ['$', '%', '&', '*', '@', '\xa0', '¢', '¨', '©', 'ã']
 
-### TODO: fill out the function below that transforms the input text and window-size into a set of input/output pairs for use with our RNN model
+    # get rid of unwanted characters
+
+    for i in unwanted_characters:       # so for each item in unwanted characters
+        text = text.replace(i, '')      # replace each unwanted character with nothing
+    return text                         # return and replace text
+
+
+
+
 def window_transform_text(text, window_size, step_size):
     # containers for input/output pairs
     inputs = []
     outputs = []
 
-    return inputs,outputs
+    # we just need to cut it up again and append to input output,
+    for i in range(window_size, len(text), step_size):      # so for each item in our range of those
+        inputs.append(text[i-window_size])                  # we're going to want to look at each incoming letter
+        outputs.append(text[i])                             # we're also going to want to create an outgoing letter
 
-# TODO build the required RNN model: 
+
+    return inputs, outputs
+
 # a single LSTM hidden layer with softmax activation, categorical_crossentropy loss 
 def build_part2_RNN(window_size, num_chars):
-    pass
+    model = Sequential()                                                                # id as Sequential
+    model.add(LSTM(200, input_shape = (window_size, num_chars)))                        # specify input shape and LSTMs
+    model.add(Dense(num_chars, activation = 'softmax'))                                 # add dense output w/ softmax
+    optimizer = keras.optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=1e-08, decay=0.0)   # add optimizer layer
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer)                 # add loss function
+    return model                                                                        # return the model
