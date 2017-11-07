@@ -81,9 +81,9 @@ def window_transform_text(text, window_size, step_size):
 # a single LSTM hidden layer with softmax activation, categorical_crossentropy loss 
 def build_part2_RNN(window_size, num_chars):
     def build_part2_RNN(window_size):
-        model = Sequential()
-        model.add(LSTM(213, input_shape = (window_size, len(chars))))
-        model.add(Dense(len(chars), activation = 'softmax'))
-        optimizer = keras.optimizers.RMSprop(lr = 0.005, rho= 0.9, epsilon= 1e-08, decay= 0.0)
-        model.compile(loss = 'categorical_crossentropy', optimizer = optimizer)
-        return model                                                          # return the model
+        model = Sequential()                                                                    # id as sequential
+        model.add(LSTM(213, input_shape = (window_size, len(chars))))                           # specify window size, length, create lstm cells
+        model.add(Dense(len(chars), activation = 'softmax'))                                    # dense layers and outputs as softmax
+        optimizer = keras.optimizers.RMSprop(lr = 0.005, rho= 0.9, epsilon= 1e-08, decay= 0.0)  # optimizer
+        model.compile(loss = 'categorical_crossentropy', optimizer = optimizer)                 # loss
+        return model                                                                            # return the model
